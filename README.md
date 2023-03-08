@@ -1,6 +1,6 @@
 # chatgpt-i18n
 
-![](https://img.shields.io/github/actions/workflow/status/observedobserver/chatgpt-i18n/auto-build)
+![](https://img.shields.io/github/actions/workflow/status/ObservedObserver/chatgpt-i18n/auto-build.yml)
 
 Translate your locale files with AI assisant.
 
