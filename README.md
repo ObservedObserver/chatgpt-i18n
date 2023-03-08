@@ -1,7 +1,10 @@
 # chatgpt-i18n
-translate your locale files with AI assisant.
 
-Welcome to the ChatGPT + i18n app! This app is designed to help you translate your locale files with ease. Whether you are translating an application, website, or any other project that requires localization, it will make the process faster and more efficient.
+![](https://img.shields.io/github/actions/workflow/status/observedobserver/chatgpt-i18n/auto-build)
+
+Translate your locale files with AI assisant.
+
+Welcome to the ChatGPT + i18n app. This app is designed to help you translate your locale files with ease. Whether you are translating an application, website, or any other project that requires localization, it will make the process faster and more efficient.
 
 
 ## Deploy
