@@ -39,3 +39,11 @@ npm run build
 # backend
 npm run server:build
 ```
+
+## Development
+
+```bash
+npm run server
+# vercel dev (this contains both frontend and backend)
+# localhost:3000
+```
