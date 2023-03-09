@@ -1,6 +1,3 @@
-![banner-chatgpt-i18n](https://user-images.githubusercontent.com/22167673/224081173-474ac863-a01f-49e7-be57-f02afcd92889.png)
-
-
 # chatgpt-i18n
 
 ![](https://img.shields.io/github/actions/workflow/status/ObservedObserver/chatgpt-i18n/auto-build.yml)
