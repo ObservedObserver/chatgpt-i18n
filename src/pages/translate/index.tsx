@@ -9,7 +9,9 @@ import tsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker"
 import Header from "../../components/header";
 import Background from "../../components/background";
 import DropdownSelect, { IDropdownSelectOption } from "../../components/dropdownSelect";
-import { compressJson, prettierJson } from "./utils";
+import { compressJson, copy2Clipboard, prettierJson } from "./utils";
+import ExportFiles from "./exportFiles";
+import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 
 self.MonacoEnvironment = {
     getWorker(_, label) {
@@ -94,7 +96,7 @@ const Translate: React.FC = (props) => {
                     >
                         {loading && (
                             <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path
                                     className="opacity-75"
                                     fill="currentColor"
@@ -104,12 +106,7 @@ const Translate: React.FC = (props) => {
                         )}
                         translate
                     </button>
-                    <button
-                        type="button"
-                        className="ml-2 px-6 rounded-lg bg-indigo-500 py-1.5 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-                    >
-                        translate and download files
-                    </button>
+                    <ExportFiles />
                 </div>
                 <div className="grid grid-cols-2 mt-6">
                     <div className="shadow-lg border border-gray-700 rounded m-2">
@@ -125,7 +122,15 @@ const Translate: React.FC = (props) => {
                         />
                     </div>
                     <div className="shadow-lg border border-gray-700 rounded m-2">
-                        <div className="p-2">translated locale</div>
+                        <div className="p-2">
+                            translated locale
+                            <DocumentDuplicateIcon
+                                onClick={() => {
+                                    copy2Clipboard(transContent);
+                                }}
+                                className="float-right w-4 text-white cursor-pointer hover:scale-110"
+                            />
+                        </div>
                         <MonacoEditor
                             // onMount={(editor, m) => {
                             //     resultEditorRef.current = editor;

@@ -13,3 +13,8 @@ export function prettierJson(content: string): string {
         throw new Error('json is not valid')
     }
 }
+
+// copy content to clipboard
+export function copy2Clipboard(content: string) {
+    navigator.clipboard.writeText(content)
+}
