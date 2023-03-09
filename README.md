@@ -15,7 +15,7 @@ I build this app because I was tired of using Google Translate to translate my l
 ## Features
 - [x] Traslate your locale files with better experience.
 - [x] A web editor for better editing and viewing experience.
-- [ ] Export multiple locale files at once. (WIP)
+- [x] Export multiple locale files at once.
 - [ ] Seperate large json file into small chunks to avoid ChatGPT breaking json.
 
 ## Deploy
