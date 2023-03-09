@@ -1,3 +1,5 @@
+![banner-chatgpt-i18n](https://user-images.githubusercontent.com/22167673/224073006-ffb0120f-dfbc-4500-ba1a-ca44c0b551ea.png)
+
 # chatgpt-i18n
 
 ![](https://img.shields.io/github/actions/workflow/status/ObservedObserver/chatgpt-i18n/auto-build.yml)
@@ -10,7 +12,14 @@ I build this app because I was tired of using Google Translate to translate my l
 
 ## Demo
 
-![chatgpt-i18n demo](https://user-images.githubusercontent.com/22167673/223788460-057b420f-c1c2-426c-b285-6284257c846b.png)
+translate
+![chatgpt-i18n demo](https://user-images.githubusercontent.com/22167673/224073144-558b3cf5-a7e5-4351-a394-5821c90f0ba9.png)
+
+download multi locale files
+![export-locale-files](https://user-images.githubusercontent.com/22167673/224073592-77bffd43-7422-40d2-984d-cfe95079ceb0.png)
+
+
+
 
 ## Features
 - [x] Traslate your locale files with better experience.
