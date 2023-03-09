@@ -12,7 +12,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
         messages: [
             {
                 role: "system",
-                content: `Translate a i18n locale json content to ${targetLang}.`,
+                content: `Translate a i18n locale json content to ${targetLang}. It's a key-value structure, don't translate the key. Consider the context of the value to make better translation.`,
             },
             {
                 role: "user",
