@@ -14,7 +14,8 @@ I build this app because I was tired of using Google Translate to translate my l
 
 translate
 
-![chatgpt-i18n demo](https://user-images.githubusercontent.com/22167673/224073144-558b3cf5-a7e5-4351-a394-5821c90f0ba9.png)
+![chatgpt-i18n demo](https://user-images.githubusercontent.com/22167673/224185217-a32406fd-740c-4ced-b86c-55b2b895dc12.png)
+
 
 download multi locale files
 
