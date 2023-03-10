@@ -46,7 +46,7 @@ async function getSubJson (node: any, action: (n: any) => Promise<any>): Promise
         let poolSize: number = 0;
         for (let key in node) {
             let nodeSize = estimateTokenCount(node[key]);
-            if (nodeSize + poolSize < 4096 / 2) {
+            if (nodeSize + poolSize < 4096 * 0.8) {
                 poolSize += nodeSize;
                 pool[key] = node[key];
                 continue;
@@ -72,6 +72,26 @@ export default async function handler(request: VercelRequest, response: VercelRe
         });
         const openai = new OpenAIApi(configuration);
         const copiedContent = JSON.parse(content);
+        if (estimateTokenCount(copiedContent) < 4096) {
+            const completion = await openai.createChatCompletion({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "system",
+                        content: `Translate a i18n locale json content to ${targetLang}. It's a key-value structure, don't translate the key. Consider the context of the value to make better translation.`,
+                    },
+                    {
+                        role: "user",
+                        content
+                    }
+                ],
+            });
+            response.status(200).json({
+                success: true,
+                data: completion.data.choices[0].message?.content
+            });
+            return;
+        }
         
         const result = await getSubJson(copiedContent, async (node) => {
             let str: string = '';
