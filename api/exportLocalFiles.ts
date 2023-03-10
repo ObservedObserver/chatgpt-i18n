@@ -45,6 +45,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
         response.status(500).json({
             success: false,
             message: '[/exportLocalFiles] Translating services failed',
+            info: error
         });
     }
 }
