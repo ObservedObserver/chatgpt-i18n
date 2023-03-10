@@ -3,6 +3,8 @@ import Modal from "../../components/modal";
 import { intlLanguages } from "./config";
 import { downloadFileFromBlob, exportLocalFiles, makeLocalesInZip } from "./services";
 import Spinner from "../../components/spinner";
+import { useNotification } from "../../notify";
+import { compressJson } from "./utils";
 
 interface ExportFilesProps {
     originalContent: string;
@@ -12,6 +14,7 @@ const ExportFiles: React.FC<ExportFilesProps> = (props) => {
     const [show, setShow] = useState<boolean>(false);
     const [selectedLangs, setSelectedLangs] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const { notify } = useNotification();
 
     const handleLangChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value, checked } = e.target;
@@ -22,32 +25,42 @@ const ExportFiles: React.FC<ExportFilesProps> = (props) => {
         }
     };
 
+    async function downloadFiles () {
+        setLoading(true);
+        try {
+            const compressedContent = compressJson(originalContent);
+            const res = await exportLocalFiles(compressedContent, selectedLangs)
+            const file = await makeLocalesInZip(res)
+            downloadFileFromBlob(file, "locales.zip")
+        } catch (error) {
+            notify({
+                title: "export files error",
+                message: `${error}`,
+                type: "error",
+            }, 3000)
+        } finally {
+            setLoading(false);
+            setShow(false);
+        }
+    }
+
     return (
         <span>
             <button
                 type="button"
-                className="ml-2 px-6 rounded-lg bg-indigo-500 py-1.5 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                className="ml-2 px-6 rounded bg-indigo-500 shadow-indigo-500/50 py-1.5 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                 onClick={() => {
                     setShow(true);
                 }}
             >
-                translate to files
+                Translate to files
             </button>
             <Modal
                 open={show}
                 onClose={() => {
                     setShow(false);
                 }}
-                onConfirm={() => {
-                    setLoading(true);
-                    exportLocalFiles(originalContent, selectedLangs)
-                        .then((res) => makeLocalesInZip(res))
-                        .then((file) => downloadFileFromBlob(file, "locales.zip"))
-                        .finally(() => {
-                            setLoading(false);
-                            setShow(false);
-                        });
-                }}
+                onConfirm={downloadFiles}
             >
                 <fieldset>
                     <legend className="text-base font-semibold leading-6 text-gray-50">Languages</legend>

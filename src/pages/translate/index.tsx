@@ -13,8 +13,9 @@ import { compressJson, copy2Clipboard, prettierJson } from "./utils";
 import ExportFiles from "./exportFiles";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { intlLanguages } from "./config";
-import { downloadFileFromBlob, exportLocalFiles, makeLocalesInZip } from "./services";
+import { translate } from "./services";
 import Spinner from "../../components/spinner";
+import { useNotification } from "../../notify";
 
 self.MonacoEnvironment = {
     getWorker(_, label) {
@@ -42,28 +43,23 @@ const Translate: React.FC = (props) => {
     const [lang, setLang] = useState<string>(intlLanguages[1].value);
     const [transContent, setTransContent] = useState("");
     const [loading, setLoading] = useState<boolean>(false);
-    // const resultEditorRef = React.useRef<monaco.editor.IStandaloneCodeEditor>();
+    const { notify } = useNotification();
 
-    const requestTranslation = useCallback(() => {
+    const requestTranslation = useCallback(async () => {
         setLoading(true);
-        const compressedContent = compressJson(originalContent);
-        fetch("/api/translate", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                content: compressedContent,
-                targetLang: lang,
-            }),
-        })
-            .then((res) => res.json())
-            .then((res) => {
-                setTransContent(prettierJson(res.data));
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        try {
+            const compressedContent = compressJson(originalContent);
+            const data = await translate(compressedContent, lang);
+            setTransContent(prettierJson(data));
+        } catch (error) {
+            notify({
+                title: "translate service error",
+                message: `${error}`,
+                type: "error",
+            }, 3000)
+        } finally {
+            setLoading(false);
+        }
     }, [originalContent, lang]);
 
     return (
@@ -83,11 +79,11 @@ const Translate: React.FC = (props) => {
                     />
                     <button
                         type="button"
-                        className="ml-2 px-6 inline-flex rounded-lg bg-indigo-500 py-1.5 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                        className="ml-2 px-6 inline-flex rounded bg-indigo-500 shadow-indigo-500/50 py-1.5 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                         onClick={requestTranslation}
                     >
                         {loading && <Spinner />}
-                        translate
+                        Translate
                     </button>
                     <ExportFiles originalContent={originalContent} />
                 </div>
@@ -110,6 +106,11 @@ const Translate: React.FC = (props) => {
                             <DocumentDuplicateIcon
                                 onClick={() => {
                                     copy2Clipboard(transContent);
+                                    notify({
+                                        type: 'success',
+                                        title: 'copied!',
+                                        message: 'copy to clipboard',
+                                    }, 1000)
                                 }}
                                 className="float-right w-4 text-white cursor-pointer hover:scale-110"
                             />
