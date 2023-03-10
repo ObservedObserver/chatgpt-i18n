@@ -28,7 +28,7 @@ download multi locale files
 - [x] Traslate your locale files with better experience.
 - [x] A web editor for better editing and viewing experience.
 - [x] Export multiple locale files at once.
-- [ ] Seperate large json file into small chunks to avoid ChatGPT breaking json.
+- [ ] Seperate large json file into small chunks to avoid ChatGPT breaking json. (WIP: the service seems slow now, I am working on it.) 
 
 ## Deploy
 
