@@ -1,6 +1,7 @@
 # chatgpt-i18n
 
 ![](https://img.shields.io/github/actions/workflow/status/ObservedObserver/chatgpt-i18n/auto-build.yml)
+![](https://img.shields.io/github/license/observedobserver/chatgpt-i18n?color=black)
 
 Translate your locale files with AI Assistance.
 
@@ -28,7 +29,7 @@ download multi locale files
 - [x] Traslate your locale files with better experience.
 - [x] A web editor for better editing and viewing experience.
 - [x] Export multiple locale files at once.
-- [ ] Seperate large json file into small chunks to avoid ChatGPT breaking json. (WIP: the service seems slow now, I am working on it.) 
+- [ ] Seperate large json file into small chunks to avoid ChatGPT breaking json. (WIP: the service seems slow now, and sometimes break the limit of vercel FaaS, I am working on it.) 
 
 ## Deploy
 
