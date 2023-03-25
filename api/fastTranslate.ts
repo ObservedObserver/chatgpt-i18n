@@ -47,17 +47,16 @@ export default async function handler(request: VercelRequest, response: VercelRe
                 },
                 {
                     role: "user",
-                    content: JSON.stringify(requireTranslation)
+                    content: JSON.stringify(requireTranslation.map(t => t[1]))
                 }
-            ],
-            max_tokens: 4000
+            ]
         });
         const translatedRaw = matchJSON(`${completion.data.choices[0].message?.content}`);
         // const translatedRaw = matchJSON(`${JSON.stringify(requireTranslation)}`);
 
-        const translated = JSON.parse(translatedRaw) as [string, string][];
+        const translated = JSON.parse(translatedRaw) as string[];
 
-        const nextPairs = translated.concat(noTranslation);
+        const nextPairs = (translated.map((t, i) => [requireTranslation[i][0], t]) as [string, string][]).concat(noTranslation);
         const result = buildJsonByPairs(nextPairs);
         response.status(200).json({
             success: true,
