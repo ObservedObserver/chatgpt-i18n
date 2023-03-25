@@ -1,7 +1,7 @@
 import { BlobWriter, ZipWriter, TextReader } from "@zip.js/zip.js";
 
 export async function translate(content: string, targetLang: string) {
-    const res = await fetch("/api/translate", {
+    const res = await fetch("/api/fastTranslate", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

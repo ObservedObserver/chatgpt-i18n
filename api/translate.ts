@@ -63,6 +63,28 @@ async function getSubJson (node: any, action: (n: any) => Promise<any>): Promise
     }
     return node
 }
+
+function matchJSON (str: string) {
+    let start = 0;
+    let end = 0;
+    let stack: string[] = [];
+    for (let i = 0; i < str.length; i++) {
+        if (str[i] === '{') {
+            if (stack.length === 0) {
+                start = i;
+            }
+            stack.push('{');
+        }
+        if (str[i] === '}') {
+            stack.pop();
+            if (stack.length === 0) {
+                end = i;
+                break;
+            }
+        }
+    }
+    return str.slice(start, end + 1);
+}
 export default async function handler(request: VercelRequest, response: VercelResponse) {
     const params = request.body;
     const { content, targetLang } = params;
@@ -85,10 +107,12 @@ export default async function handler(request: VercelRequest, response: VercelRe
                         content
                     }
                 ],
+                max_tokens: 4000
             });
+            const ans = matchJSON(`${completion.data.choices[0].message?.content}`);
             response.status(200).json({
                 success: true,
-                data: completion.data.choices[0].message?.content
+                data: ans
             });
             return;
         }

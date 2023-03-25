@@ -30,7 +30,8 @@ export default async function handler(request: VercelRequest, response: VercelRe
                         content: content,
                     },
                 ],
-            });
+                max_tokens: 1000,
+            }, { timeout:5000 });
             result.push({
                 lang,
                 content: `${completion.data.choices[0].message?.content}`,
