@@ -29,7 +29,7 @@ download multi locale files
 - [x] Traslate your locale files with better experience.
 - [x] A web editor for better editing and viewing experience.
 - [x] Export multiple locale files at once.
-- [ ] Seperate large json file into small chunks to avoid ChatGPT breaking json. (WIP: the service seems slow now, and sometimes break the limit of vercel FaaS, I am working on it.) 
+- [x] Seperate large json file into small chunks to avoid ChatGPT breaking json. (WIP: the service seems slow now, and sometimes break the limit of vercel FaaS, I am working on it.) 
 
 ## Deploy
 
