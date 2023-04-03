@@ -8,7 +8,7 @@ import htmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
 import tsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
 import Header from "../../components/header";
 import Background from "../../components/background";
-import DropdownSelect, { IDropdownSelectOption } from "../../components/dropdownSelect";
+import DropdownSelect from "../../components/dropdownSelect";
 import { compressJson, copy2Clipboard, prettierJson } from "./utils";
 import ExportFiles from "./exportFiles";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
@@ -16,6 +16,7 @@ import { intlLanguages } from "./config";
 import { translate } from "./services";
 import Spinner from "../../components/spinner";
 import { useNotification } from "../../notify";
+import TextField from "../../components/textField";
 
 self.MonacoEnvironment = {
     getWorker(_, label) {
@@ -42,6 +43,7 @@ const Translate: React.FC = (props) => {
     const [originalContent, setOriginalContent] = useState("");
     const [lang, setLang] = useState<string>(intlLanguages[1].value);
     const [transContent, setTransContent] = useState("");
+    const [extraPrompt, setExtraPrompt] = useState("");
     const [loading, setLoading] = useState<boolean>(false);
     const { notify } = useNotification();
 
@@ -49,7 +51,7 @@ const Translate: React.FC = (props) => {
         setLoading(true);
         try {
             const compressedContent = compressJson(originalContent);
-            const data = await translate(compressedContent, lang);
+            const data = await translate(compressedContent, lang, extraPrompt);
             setTransContent(prettierJson(data));
         } catch (error) {
             notify({
@@ -60,7 +62,7 @@ const Translate: React.FC = (props) => {
         } finally {
             setLoading(false);
         }
-    }, [originalContent, lang]);
+    }, [originalContent, lang, extraPrompt]);
 
     return (
         <div className="text-white">
@@ -79,7 +81,7 @@ const Translate: React.FC = (props) => {
                     />
                     <button
                         type="button"
-                        className="ml-2 px-6 inline-flex rounded bg-indigo-500 shadow-indigo-500/50 py-1.5 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                        className="ml-2 px-6 inline-flex rounded bg-indigo-600 shadow-indigo-500/50 py-1.5 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                         onClick={requestTranslation}
                     >
                         {loading && <Spinner />}
@@ -87,9 +89,19 @@ const Translate: React.FC = (props) => {
                     </button>
                     <ExportFiles originalContent={originalContent} />
                 </div>
+                <div className="mt-2">
+                    <TextField
+                        label="Customized Prompt (Optional)"
+                        placeholder="Add more prompt (like background knowledge) to help the translation if needed."
+                        value={extraPrompt}
+                        onChange={(val) => {
+                            setExtraPrompt(val);
+                        }}
+                    />
+                </div>
                 <div className="grid grid-cols-2 mt-6">
                     <div className="shadow-lg border border-gray-700 rounded m-2">
-                        <div className="p-2">original locale</div>
+                        <div className="p-2">Original locale</div>
                         <MonacoEditor
                             value={originalContent}
                             onChange={(val) => {
@@ -102,7 +114,7 @@ const Translate: React.FC = (props) => {
                     </div>
                     <div className="shadow-lg border border-gray-700 rounded m-2">
                         <div className="p-2">
-                            translated locale
+                            Translated locale
                             <DocumentDuplicateIcon
                                 onClick={() => {
                                     copy2Clipboard(transContent);
@@ -112,7 +124,7 @@ const Translate: React.FC = (props) => {
                                         message: 'copy to clipboard',
                                     }, 1000)
                                 }}
-                                className="float-right w-4 text-white cursor-pointer hover:scale-110"
+                                className="float-right w-5 text-white cursor-pointer hover:scale-110"
                             />
                         </div>
                         <MonacoEditor

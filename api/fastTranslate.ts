@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { Configuration, OpenAIApi } from 'openai'
+import { Configuration, OpenAIApi, ChatCompletionRequestMessage } from 'openai'
 import { buildJsonByPairs, compressValuesInJson, groupPairs } from "./utils/utils.js";
 // import { buildJsonByPairs, compressValuesInJson, groupPairs } from '../lib/utils/index'
 
@@ -24,9 +24,15 @@ function matchJSON (str: string) {
     }
     return str.slice(start, end + 1);
 }
+
+interface IReqBody {
+    content: string;
+    targetLang: string;
+    extraPrompt?: string;
+}
 export default async function handler(request: VercelRequest, response: VercelResponse) {
-    const params = request.body;
-    const { content, targetLang } = params;
+    const params = request.body as IReqBody;
+    const { content, targetLang, extraPrompt } = params;
     try {
         const configuration = new Configuration({
             apiKey: process.env.OPENAI_API_KEY,
@@ -37,19 +43,28 @@ export default async function handler(request: VercelRequest, response: VercelRe
         compressValuesInJson(locale, '', pairs);
 
         const { requireTranslation, noTranslation } = groupPairs(pairs)
-
+        const messages: ChatCompletionRequestMessage[] = [
+            {
+                role: "system",
+                content: `You are a helpful assistant that translates a i18n locale array content to ${targetLang}. 
+                It's a array structure, contains many strings, translate each of them and make a new array of translated strings.
+                Consider all the string as a context to make better translation.\n`,
+            }
+        ]
+        if (typeof extraPrompt === 'string' && extraPrompt.length > 0) {
+            messages.push({
+                role: 'user',
+                content: `Other tips for translation: ${extraPrompt}\n
+                Translate this array:`
+            })
+        }
+        messages.push({
+            role: "user",
+            content: JSON.stringify(requireTranslation.map(t => t[1]))
+        })
         const completion = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
-            messages: [
-                {
-                    role: "system",
-                    content: `You are a great translate bot. Translate a i18n locale array content to ${targetLang}. It's a array structure, contains many strings, translate each of them and make a new array of translated strings. Consider all the string as a context to make better translation.\n`,
-                },
-                {
-                    role: "user",
-                    content: JSON.stringify(requireTranslation.map(t => t[1]))
-                }
-            ]
+            messages
         });
         const translatedRaw = matchJSON(`${completion.data.choices[0].message?.content}`);
         // const translatedRaw = matchJSON(`${JSON.stringify(requireTranslation)}`);
