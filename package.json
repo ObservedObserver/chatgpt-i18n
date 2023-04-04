@@ -24,6 +24,7 @@
     "@zip.js/zip.js": "^2.6.78",
     "monaco-editor": "^0.36.1",
     "openai": "^3.2.1",
+    "p-retry": "^5.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.2",
