@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import LangingPage from "./pages/landing";
 import Translate from "./pages/translate";
-import Setting from "./pages/settting";
+import Settings from "./pages/setttings";
 
 const appRouter = createBrowserRouter([
     {
@@ -14,8 +14,8 @@ const appRouter = createBrowserRouter([
         element: <Translate />,
     },
     {
-        path: "/setting",
-        element: <Setting />,
+        path: "/settings",
+        element: <Settings />,
     },
 ]);
 
