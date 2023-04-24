@@ -9,14 +9,15 @@ import tsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker"
 import Header from "../../components/header";
 import Background from "../../components/background";
 import DropdownSelect from "../../components/dropdownSelect";
-import { compressJson, copy2Clipboard, prettierJson } from "./utils";
+import { compress, copy2Clipboard, prettierJson } from "./utils";
 import ExportFiles from "./exportFiles";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
-import { intlLanguages } from "./config";
+import { fileTypes, intlLanguages } from "./config";
 import { translate } from "./services";
 import Spinner from "../../components/spinner";
 import { useNotification } from "../../notify";
 import TextField from "../../components/textField";
+import { FileType } from "./types";
 
 self.MonacoEnvironment = {
     getWorker(_, label) {
@@ -45,24 +46,28 @@ const Translate: React.FC = (props) => {
     const [transContent, setTransContent] = useState("");
     const [extraPrompt, setExtraPrompt] = useState("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [fileType, setFileType] = useState<FileType>("json");
     const { notify } = useNotification();
 
     const requestTranslation = useCallback(async () => {
         setLoading(true);
         try {
-            const compressedContent = compressJson(originalContent);
-            const data = await translate(compressedContent, lang, extraPrompt);
-            setTransContent(prettierJson(data));
+            const compressedContent = compress(originalContent, fileType);
+            const data = await translate(compressedContent, lang, fileType, extraPrompt);
+            setTransContent(prettierJson(data, fileType));
         } catch (error) {
-            notify({
-                title: "translate service error",
-                message: `${error}`,
-                type: "error",
-            }, 3000)
+            notify(
+                {
+                    title: "translate service error",
+                    message: `${error}`,
+                    type: "error",
+                },
+                3000
+            );
         } finally {
             setLoading(false);
         }
-    }, [originalContent, lang, extraPrompt]);
+    }, [originalContent, lang, fileType, extraPrompt]);
 
     return (
         <div className="text-white">
@@ -75,9 +80,14 @@ const Translate: React.FC = (props) => {
                         buttonClassName="w-full"
                         options={intlLanguages}
                         selectedKey={lang}
-                        onSelect={(val) => {
-                            setLang(val);
-                        }}
+                        onSelect={(val) => setLang(val)}
+                    />
+                    <DropdownSelect
+                        className="inline-block w-28 pl-2"
+                        buttonClassName="w-full"
+                        options={fileTypes}
+                        selectedKey={fileType}
+                        onSelect={(val) => setFileType(val as FileType)}
                     />
                     <button
                         type="button"
@@ -87,7 +97,7 @@ const Translate: React.FC = (props) => {
                         {loading && <Spinner />}
                         Translate
                     </button>
-                    <ExportFiles originalContent={originalContent} />
+                    <ExportFiles originalContent={originalContent} fileType={fileType} />
                 </div>
                 <div className="mt-2">
                     <TextField
@@ -108,7 +118,7 @@ const Translate: React.FC = (props) => {
                                 setOriginalContent(val ?? "");
                             }}
                             height="600px"
-                            language="json"
+                            language={fileType}
                             theme="vs-dark"
                         />
                     </div>
@@ -118,11 +128,14 @@ const Translate: React.FC = (props) => {
                             <DocumentDuplicateIcon
                                 onClick={() => {
                                     copy2Clipboard(transContent);
-                                    notify({
-                                        type: 'success',
-                                        title: 'copied!',
-                                        message: 'copy to clipboard',
-                                    }, 1000)
+                                    notify(
+                                        {
+                                            type: "success",
+                                            title: "copied!",
+                                            message: "copy to clipboard",
+                                        },
+                                        1000
+                                    );
                                 }}
                                 className="float-right w-5 text-white cursor-pointer hover:scale-110"
                             />
@@ -133,7 +146,7 @@ const Translate: React.FC = (props) => {
                             // }}
                             value={transContent}
                             height="600px"
-                            language="json"
+                            language={fileType}
                             theme="vs-dark"
                         />
                     </div>
