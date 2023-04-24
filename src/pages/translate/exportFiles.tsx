@@ -4,11 +4,14 @@ import { intlLanguages } from "./config";
 import { downloadFileFromBlob, exportLocalFiles, makeLocalesInZip } from "./services";
 import Spinner from "../../components/spinner";
 import { useNotification } from "../../notify";
-import { compressJson } from "./utils";
+import { compress } from "./utils";
+import { FileType } from "./types";
 
 interface ExportFilesProps {
     originalContent: string;
+    fileType: FileType;
 }
+
 const ExportFiles: React.FC<ExportFilesProps> = (props) => {
     const { originalContent } = props;
     const [show, setShow] = useState<boolean>(false);
@@ -25,19 +28,22 @@ const ExportFiles: React.FC<ExportFilesProps> = (props) => {
         }
     };
 
-    async function downloadFiles () {
+    async function downloadFiles() {
         setLoading(true);
         try {
-            const compressedContent = compressJson(originalContent);
-            const res = await exportLocalFiles(compressedContent, selectedLangs)
-            const file = await makeLocalesInZip(res)
-            downloadFileFromBlob(file, "locales.zip")
+            const compressedContent = compress(originalContent, props.fileType);
+            const res = await exportLocalFiles(compressedContent, selectedLangs, props.fileType);
+            const file = await makeLocalesInZip(res, props.fileType);
+            downloadFileFromBlob(file, "locales.zip");
         } catch (error) {
-            notify({
-                title: "export files error",
-                message: `${error}`,
-                type: "error",
-            }, 3000)
+            notify(
+                {
+                    title: "export files error",
+                    message: `${error}`,
+                    type: "error",
+                },
+                3000
+            );
         } finally {
             setLoading(false);
             setShow(false);
@@ -48,7 +54,7 @@ const ExportFiles: React.FC<ExportFilesProps> = (props) => {
         <span>
             <button
                 type="button"
-                className="ml-2 px-6 rounded bg-indigo-600 shadow-indigo-500/50 py-1.5 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                className="ml-2 rounded bg-indigo-600 shadow-indigo-500/50 py-1.5 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                 onClick={() => {
                     setShow(true);
                 }}
@@ -87,12 +93,12 @@ const ExportFiles: React.FC<ExportFilesProps> = (props) => {
                         ))}
                     </div>
                 </fieldset>
-                {
-                    loading &&<div className="flex justify-center py-2">
+                {loading && (
+                    <div className="flex justify-center py-2">
                         <Spinner />
                         <h2 className="text-base font-white">Generate locale files</h2>
                     </div>
-                }
+                )}
             </Modal>
         </span>
     );

@@ -12,3 +12,8 @@ export const intlLanguages: IDropdownSelectOption[] = [
     { value: "Russian", label: "Русский" },
     { value: "Chinese", label: "中文" },
 ];
+
+export const fileTypes: IDropdownSelectOption[] = [
+    { value: "json", label: "json" },
+    { value: "yaml", label: "yaml" },
+];
