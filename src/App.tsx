@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 import LangingPage from "./pages/landing";
 import Translate from "./pages/translate";
 import Settings from "./pages/setttings";
+import NotFound from "./pages/404";
 
 const appRouter = createBrowserRouter([
     {
@@ -17,6 +18,10 @@ const appRouter = createBrowserRouter([
         path: "/settings",
         element: <Settings />,
     },
+    {
+        path: "*",
+        element: <NotFound />
+    }
 ]);
 
 export default appRouter;
