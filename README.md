@@ -52,6 +52,7 @@ npm run build
 # backend
 npm run server:build
 ```
+For saving the OPENAI_API_KEY in Vercel, you may need to provide the `OPEN_API_KEY` env variable in your project dashboard Settings > Environment Variables
 
 ## Development
 

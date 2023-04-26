@@ -1,28 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { Configuration, OpenAIApi } from 'openai'
-// import { estimateTokenCount } from "./utils/index";
-
-function estimateTokenCount(content: any): number {
-    if (typeof content === 'string') {
-        return content.split(/[\s.'_A-Z0-9]/).length * 2;
-    }
-    if (content instanceof Array) {
-        let count = 0;
-        for (let item of content) {
-            count += estimateTokenCount(item);
-        }
-        return count;
-    }
-    if (typeof content === 'object') {
-        let count = 0;
-        for (let key in content) {
-            count += estimateTokenCount(content[key]);
-            count += key.split(/[_A-Z0-9]/).length * 2;
-        }
-        return count;
-    }
-    return 1
-}
+import { estimateTokenCount } from "./utils/utils";
 
 async function getSubJson (node: any, action: (n: any) => Promise<any>): Promise<any> {
     if (estimateTokenCount(node) < 4096) {
