@@ -1,23 +1,47 @@
-import { FileType } from "./types"
+import xml from "fast-xml-parser";
 import yaml from "js-yaml";
+
+export type FileType = "json" | "yaml" | "xml";
+
+const xmlOptions = {
+    ignoreAttributes: false,
+    allowBooleanAttributes: true,
+    attributeNamePrefix: "@_",
+    preserverOrder: true,
+};
+
+export const xmlParser = new xml.XMLParser(xmlOptions);
+export const xmlBuilder = new xml.XMLBuilder({ ...xmlOptions, format: true });
 
 export function compress(content: string, fileType: FileType): string {
     try {
-        return fileType === "json" ? JSON.stringify(JSON.parse(content)) : JSON.stringify(yaml.load(content)) as string;
+        if (fileType === "xml") {
+            return JSON.stringify(xmlParser.parse(content));
+        }
+        if (fileType === "yaml") {
+            return JSON.stringify(yaml.load(content));
+        }
+        return JSON.stringify(JSON.parse(content));
     } catch (error) {
-        throw new Error(`${fileType} is not valid`)
+        throw new Error(`${fileType} is not valid`);
     }
 }
 
-export function prettierJson(content: string, fileType: FileType): string {
+export function prettify(content: string, fileType: FileType): string {
     try {
-        return fileType === "json" ? JSON.stringify(JSON.parse(content), null, 2) : yaml.dump(yaml.load(content)) as string;
+        if (fileType === "xml") {
+            return xmlBuilder.build(xmlParser.parse(content));
+        }
+        if (fileType === "yaml") {
+            yaml.dump(yaml.load(content));
+        }
+        return JSON.stringify(JSON.parse(content), null, 2);
     } catch (error) {
-        throw new Error('json is not valid')
+        throw new Error(`${fileType} is not valid`);
     }
 }
 
 // copy content to clipboard
-export function copy2Clipboard(content: string) {
-    navigator.clipboard.writeText(content)
+export function copy2clipboard(content: string) {
+    navigator.clipboard.writeText(content);
 }

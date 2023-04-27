@@ -9,7 +9,7 @@ import tsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker"
 import Header from "../../components/header";
 import Background from "../../components/background";
 import DropdownSelect from "../../components/dropdownSelect";
-import { compress, copy2Clipboard, prettierJson } from "./utils";
+import { compress, copy2clipboard, prettify } from "./utils";
 import ExportFiles from "./exportFiles";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { fileTypes, intlLanguages } from "./config";
@@ -17,7 +17,8 @@ import { translate } from "./services";
 import Spinner from "../../components/spinner";
 import { useNotification } from "../../notify";
 import TextField from "../../components/textField";
-import { FileType } from "./types";
+import { FileType } from "./utils";
+import xml from "fast-xml-parser";
 
 self.MonacoEnvironment = {
     getWorker(_, label) {
@@ -54,7 +55,7 @@ const Translate: React.FC = (props) => {
         try {
             const compressedContent = compress(originalContent, fileType);
             const data = await translate(compressedContent, lang, fileType, extraPrompt);
-            setTransContent(prettierJson(data, fileType));
+            setTransContent(prettify(data, fileType));
         } catch (error) {
             notify(
                 {
@@ -91,7 +92,7 @@ const Translate: React.FC = (props) => {
                     />
                     <button
                         type="button"
-                        className="ml-2 px-6 inline-flex rounded bg-indigo-500 shadow-indigo-500/50 py-1.5 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                        className="ml-2 inline-flex rounded bg-indigo-500 shadow-indigo-500/50 py-1.5 px-6 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                         onClick={requestTranslation}
                     >
                         {loading && <Spinner />}
@@ -127,7 +128,7 @@ const Translate: React.FC = (props) => {
                             Translated locale
                             <DocumentDuplicateIcon
                                 onClick={() => {
-                                    copy2Clipboard(transContent);
+                                    copy2clipboard(transContent);
                                     notify(
                                         {
                                             type: "success",
