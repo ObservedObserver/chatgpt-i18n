@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import Modal from "../../components/modal";
-import { intlLanguages } from "./config";
-import { downloadFileFromBlob, exportLocalFiles, makeLocalesInZip } from "./services";
 import Spinner from "../../components/spinner";
 import { useNotification } from "../../notify";
-import { compress } from "./utils";
-import { FileType } from "./types";
+import { intlLanguages } from "./config";
+import { downloadFileFromBlob, exportLocalFiles, makeLocalesInZip } from "./services";
+import { FileType, compress } from "./utils";
 
 interface ExportFilesProps {
     originalContent: string;
@@ -54,7 +53,7 @@ const ExportFiles: React.FC<ExportFilesProps> = (props) => {
         <span>
             <button
                 type="button"
-                className="ml-2 px-6 rounded bg-indigo-500 shadow-indigo-500/50 py-1.5 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                className="ml-2 rounded bg-indigo-500 shadow-indigo-500/50 py-1.5 px-6 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                 onClick={() => {
                     setShow(true);
                 }}
