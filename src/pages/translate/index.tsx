@@ -13,11 +13,14 @@ import { compress, copy2Clipboard, prettierJson } from "./utils";
 import ExportFiles from "./exportFiles";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { fileTypes, intlLanguages } from "./config";
-import { translate } from "./services";
 import Spinner from "../../components/spinner";
 import { useNotification } from "../../notify";
 import TextField from "../../components/textField";
 import { FileType } from "./types";
+import { translateService } from "../../services/translate";
+import { useGlobalStore } from "../../store";
+import { toJS } from "mobx";
+import { Link } from "react-router-dom";
 
 self.MonacoEnvironment = {
     getWorker(_, label) {
@@ -48,12 +51,20 @@ const Translate: React.FC = (props) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [fileType, setFileType] = useState<FileType>("json");
     const { notify } = useNotification();
+    const { commonStore } = useGlobalStore();
 
     const requestTranslation = useCallback(async () => {
         setLoading(true);
         try {
             const compressedContent = compress(originalContent, fileType);
-            const data = await translate(compressedContent, lang, fileType, extraPrompt);
+            // const data = await translate(compressedContent, lang, fileType, extraPrompt);
+            const data = await translateService({
+                content: compressedContent,
+                targetLang: lang,
+                // fileType,
+                extraPrompt,
+                config: toJS(commonStore.config),
+            });
             setTransContent(prettierJson(data, fileType));
         } catch (error) {
             notify(
@@ -73,7 +84,10 @@ const Translate: React.FC = (props) => {
         <div className="text-white">
             <Header />
             <Background />
-            <div className="container mx-auto mt-4">
+            <div className="container mx-auto p-4">
+                <p className="my-2">GPT keys is not provided by default now, set your own keys at <Link className="underline" to={"/settings"}>
+                    Settings
+                </Link></p>
                 <div className="dark flex items-center">
                     <DropdownSelect
                         className="inline-block w-36"

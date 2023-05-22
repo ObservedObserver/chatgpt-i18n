@@ -10,6 +10,7 @@ export function compress(content: string, fileType: FileType): string {
 }
 
 export function prettierJson(content: string, fileType: FileType): string {
+    if (typeof content !== "string") return JSON.stringify(content, null, 2);
     try {
         return fileType === "json" ? JSON.stringify(JSON.parse(content), null, 2) : yaml.dump(yaml.load(content)) as string;
     } catch (error) {

@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { useEffect } from "react";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import LangingPage from "./pages/landing";
 import Translate from "./pages/translate";
 import Settings from "./pages/setttings";
 import NotFound from "./pages/404";
+import { useGlobalStore } from "./store";
 
 const appRouter = createBrowserRouter([
     {
@@ -24,4 +25,12 @@ const appRouter = createBrowserRouter([
     }
 ]);
 
-export default appRouter;
+export default function (props: { children?: React.ReactNode }) {
+    const { commonStore } = useGlobalStore();
+    useEffect(() => {
+        commonStore.loadConfig();
+    }, [])
+    return <RouterProvider router={appRouter} />
+}
+
+// export default appRouter;
