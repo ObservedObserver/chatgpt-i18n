@@ -6,6 +6,9 @@ import Spinner from "../../components/spinner";
 import { useNotification } from "../../notify";
 import { compress } from "./utils";
 import { FileType } from "./types";
+import { translate2Files } from "../../services/translate2Files";
+import { useGlobalStore } from "../../store";
+import { toJS } from "mobx";
 
 interface ExportFilesProps {
     originalContent: string;
@@ -18,6 +21,7 @@ const ExportFiles: React.FC<ExportFilesProps> = (props) => {
     const [selectedLangs, setSelectedLangs] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const { notify } = useNotification();
+    const { commonStore } = useGlobalStore();
 
     const handleLangChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value, checked } = e.target;
@@ -32,8 +36,13 @@ const ExportFiles: React.FC<ExportFilesProps> = (props) => {
         setLoading(true);
         try {
             const compressedContent = compress(originalContent, props.fileType);
-            const res = await exportLocalFiles(compressedContent, selectedLangs, props.fileType);
-            const file = await makeLocalesInZip(res, props.fileType);
+            // const res = await exportLocalFiles(compressedContent, selectedLangs, props.fileType);
+            const resultList = await translate2Files({
+                content: compressedContent,
+                langList: selectedLangs,
+                config: toJS(commonStore.config)
+            })
+            const file = await makeLocalesInZip(resultList, props.fileType);
             downloadFileFromBlob(file, "locales.zip");
         } catch (error) {
             notify(
