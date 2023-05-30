@@ -20,7 +20,17 @@ export const intlLanguages: IDropdownSelectOption[] = [
     { value: "Swedish", label: "Svenska" },
     { value: "Turkish", label: "Türkçe" },
     { value: "Vietnamese", label: "Tiếng Việt" },
+    { value: "Danish", label: "Dansk" },
+    { value: "Norwegian", label: "Norsk" },
+    { value: "Finnish", label: "Suomi" },
+    { value: "Czech", label: "Čeština" },
+    { value: "Hungarian", label: "Magyar" },
+    { value: "Romanian", label: "Română" },
+    { value: "Thai", label: "ไทย" },
+    { value: "Ukrainian", label: "Українська" },
+    { value: "Hebrew", label: "עברית" },
 ];
+
 
 
 export const fileTypes: IDropdownSelectOption[] = [
