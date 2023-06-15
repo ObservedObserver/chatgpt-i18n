@@ -65,7 +65,7 @@ export async function createChatCompletion(props: ICreateChatCompletionProps, co
     }
     if (config.serviceProvider === 'openai') {
         // openai chat completion
-        url = 'https://api.openai.com/v1/engines/davinci/completions'
+        url = 'https://api.openai.com/v1/chat/completions'
         headers['Authorization'] = `Bearer ${config.apiKey}`
     } else if (config.serviceProvider === 'azure') {
         headers['api-key'] = `${config.apiKey}`
