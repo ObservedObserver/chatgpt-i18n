@@ -11,8 +11,7 @@ I build this app because I was tired of using Google Translate to translate my l
 
 ## Demo
 
-[Demo on Vercel](https://chatgpt-i18n.vercel.app/)
-
+[Demo on Vercel](https://www.i18n.ing/)
 translate
 
 ![chatgpt-i18n demo](https://user-images.githubusercontent.com/22167673/224185217-a32406fd-740c-4ced-b86c-55b2b895dc12.png)
