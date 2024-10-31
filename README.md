@@ -17,7 +17,7 @@ translate
 ![chatgpt-i18n demo](https://user-images.githubusercontent.com/22167673/224185217-a32406fd-740c-4ced-b86c-55b2b895dc12.png)
 
 
-download multi locale files
+download multi-locale files
 
 ![export-locale-files](https://user-images.githubusercontent.com/22167673/224073592-77bffd43-7422-40d2-984d-cfe95079ceb0.png)
 
@@ -25,10 +25,10 @@ download multi locale files
 
 
 ## Features
-- [x] Traslate your locale files with better experience.
+- [x] Translate your locale files with better experience.
 - [x] A web editor for better editing and viewing experience.
 - [x] Export multiple locale files at once.
-- [x] Seperate large json file into small chunks to avoid ChatGPT breaking json. (WIP: the service seems slow now, and sometimes break the limit of vercel FaaS, I am working on it.) 
+- [x] Separate large JSON files into small chunks to avoid ChatGPT breaking JSON. (WIP: the service seems slow now, and sometimes break the limit of vercel FaaS, I am working on it.) 
 
 ## Deploy
 
