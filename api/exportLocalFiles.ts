@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { Configuration, OpenAIApi } from "openai";
+import { createTranslationClient, translationModel } from "../lib/openrouter.js";
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
     const params = request.body;
@@ -12,14 +12,11 @@ export default async function handler(request: VercelRequest, response: VercelRe
         return;
     }
     try {
-        const configuration = new Configuration({
-            apiKey: process.env.OPENAI_API_KEY,
-        });
-        const openai = new OpenAIApi(configuration);
+        const openai = createTranslationClient();
         const result: { lang: string; content: string }[] = [];
         for (let lang of langList) {
-            const completion = await openai.createChatCompletion({
-                model: "gpt-3.5-turbo",
+            const completion = await openai.chat.completions.create({
+                ...translationModel(),
                 messages: [
                     {
                         role: "system",
@@ -31,10 +28,10 @@ export default async function handler(request: VercelRequest, response: VercelRe
                     },
                 ],
                 max_tokens: 1000,
-            }, { timeout:5000 });
+            });
             result.push({
                 lang,
-                content: `${completion.data.choices[0].message?.content}`,
+                content: `${completion.choices[0].message?.content}`,
             });
         }
 

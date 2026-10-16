@@ -1,4 +1,5 @@
 import React from "react";
+import { DEFAULT_MODEL } from "../../../lib/ai-config";
 import Header from "../../components/header";
 import TextField from "../../components/textField";
 import { observer } from "mobx-react-lite";
@@ -24,21 +25,30 @@ const Settings: React.FC = (props) => {
                             label: "azure",
                         },
                         {
-                            value: "openai",
-                            label: "openai",
+                            value: "openrouter",
+                            label: "OpenRouter",
                         },
                     ]}
                     selectedKey={config.serviceProvider}
                     onSelect={(v) => {
+                        if (v !== config.serviceProvider) {
+                            commonStore.updateConfig("apiKey", "");
+                            commonStore.updateConfig("model", v === "openrouter" ? DEFAULT_MODEL : "gpt-3.5-turbo");
+                        }
                         commonStore.updateConfig("serviceProvider", v);
                     }}
                 />
                 <TextField
                     value={`${config.apiKey}`}
-                    label="API Key"
+                    label={config.serviceProvider === "openrouter" ? "OpenRouter API Key" : "API Key"}
                     onChange={(v) => {
                         commonStore.updateConfig("apiKey", v);
                     }}
+                />
+                <TextField
+                    value={config.model}
+                    label="Model"
+                    onChange={(v) => commonStore.updateConfig("model", v)}
                 />
                 {config.serviceProvider === "azure" && (
                     <TextField

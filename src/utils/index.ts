@@ -1,4 +1,5 @@
 import { IMessage, IUserSetting } from "../interface";
+import { OPENROUTER_BASE_URL, translationModelOptions } from "../../lib/ai-config";
 
 export function compressValuesInJson (conentJson: any, path: string, pairs: [string, any][]) {
     if (typeof conentJson === 'object') {
@@ -63,13 +64,19 @@ export async function createChatCompletion(props: ICreateChatCompletionProps, co
     const headers: HeadersInit = {
         'Content-Type': 'application/json',
     }
-    if (config.serviceProvider === 'openai') {
-        // openai chat completion
-        url = 'https://api.openai.com/v1/chat/completions'
+    if (config.serviceProvider === 'openrouter') {
+        // OpenRouter uses the OpenAI-compatible chat completion API.
+        url = `${OPENROUTER_BASE_URL}/chat/completions`
         headers['Authorization'] = `Bearer ${config.apiKey}`
     } else if (config.serviceProvider === 'azure') {
         headers['api-key'] = `${config.apiKey}`
         url = `${config.baseURL}/openai/deployments/${config.deployName}/chat/completions?api-version=2023-03-15-preview`
+    }
+    if (!url) {
+        throw new Error('Please select OpenRouter or Azure in Settings');
+    }
+    if (!config.apiKey?.trim()) {
+        throw new Error('Please enter your API key in Settings');
     }
     const response = await fetch(url, {
         method: 'POST',
@@ -77,7 +84,7 @@ export async function createChatCompletion(props: ICreateChatCompletionProps, co
         body: JSON.stringify({
             model: props.model,
             messages: props.messages,
-            temperature: 0,
+            ...(config.serviceProvider === "azure" ? { temperature: 0 } : translationModelOptions(props.model)),
         })
     })
     if (response.status !== 200) {
