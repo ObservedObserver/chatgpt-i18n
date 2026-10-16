@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { Configuration, OpenAIApi } from 'openai'
+import { createTranslationClient, translationModel } from "../lib/openrouter.js";
 // import { estimateTokenCount } from "./utils/index";
 
 function estimateTokenCount(content: any): number {
@@ -89,14 +89,11 @@ export default async function handler(request: VercelRequest, response: VercelRe
     const params = request.body;
     const { content, targetLang } = params;
     try {
-        const configuration = new Configuration({
-            apiKey: process.env.OPENAI_API_KEY,
-        });
-        const openai = new OpenAIApi(configuration);
+        const openai = createTranslationClient();
         const copiedContent = JSON.parse(content);
         if (estimateTokenCount(copiedContent) < 4096) {
-            const completion = await openai.createChatCompletion({
-                model: "gpt-3.5-turbo",
+            const completion = await openai.chat.completions.create({
+                ...translationModel(),
                 messages: [
                     {
                         role: "system",
@@ -109,7 +106,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
                 ],
                 max_tokens: 4000
             });
-            const ans = matchJSON(`${completion.data.choices[0].message?.content}`);
+            const ans = matchJSON(`${completion.choices[0].message?.content}`);
             response.status(200).json({
                 success: true,
                 data: ans
@@ -124,8 +121,8 @@ export default async function handler(request: VercelRequest, response: VercelRe
             } else {
                 str = `${node}`
             }
-            const completion = await openai.createChatCompletion({
-                model: "gpt-3.5-turbo",
+            const completion = await openai.chat.completions.create({
+                ...translationModel(),
                 messages: [
                     {
                         role: "system",
@@ -137,14 +134,14 @@ export default async function handler(request: VercelRequest, response: VercelRe
                     }
                 ],
             });
-            let res: any = `${completion.data.choices[0].message?.content}`;
+            let res: any = `${completion.choices[0].message?.content}`;
             if (typeof node === 'string') {
                 return res;
             }
             try {
                 res = JSON.parse(res)
             } catch (error) {
-                res = completion.data.choices[0].message?.content
+                res = completion.choices[0].message?.content
             }
             return res
         })

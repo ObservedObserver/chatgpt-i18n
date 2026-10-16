@@ -1,13 +1,14 @@
 import { makeAutoObservable, toJS } from "mobx";
 import { IUserSetting } from "../interface";
+import { DEFAULT_MODEL } from "../../lib/ai-config";
 
 export class CommonStore {
     config: IUserSetting = {
-        apiKey: "your-key",
+        apiKey: "",
         baseURL: "https://xxx.openai.azure.com",
         deployName: "xxx",
-        serviceProvider: "azure",
-        model: "gpt-3.5-turbo-0301",
+        serviceProvider: "openrouter",
+        model: DEFAULT_MODEL,
     };
     constructor() {
         makeAutoObservable(this);
@@ -23,7 +24,18 @@ export class CommonStore {
         const configJSON = localStorage.getItem("config");
         if (configJSON && configJSON.length > 0) {
             try {
-                this.config = JSON.parse(configJSON);
+                const saved = JSON.parse(configJSON);
+                this.config = { ...this.config, ...saved };
+                if (saved.serviceProvider === "openai") {
+                    this.config.serviceProvider = "openrouter";
+                    this.config.apiKey = "";
+                    this.config.model = DEFAULT_MODEL;
+                    this.saveConfig();
+                } else if (saved.serviceProvider === "openrouter" &&
+                    (!saved.model || ["gpt-3.5-turbo", "gpt-3.5-turbo-0301", "openai/gpt-3.5-turbo"].includes(saved.model))) {
+                    this.config.model = DEFAULT_MODEL;
+                    this.saveConfig();
+                }
             } catch (error) {}
         } else {
             console.log('Not found default settings')

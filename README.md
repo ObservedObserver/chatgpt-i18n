@@ -32,14 +32,26 @@ download multi locale files
 
 ## Deploy
 
-Step 1. Create .env file with openai key
+Requires Node.js 22. The backend uses OpenAI SDK 7 with OpenRouter.
+
+Step 1. Create .env with your OpenRouter key for the backend APIs
 ```bash
-OPENAI_API_KEY=<your key>
+OPENROUTER_API_KEY=<your OpenRouter key>
+OPENROUTER_MODEL=openai/gpt-5.4-mini
 ```
+
+Browser translations use the key saved in Settings, independently of the backend environment.
+Select OpenRouter, enter your OpenRouter API key, and save. The default model is
+`openai/gpt-5.4-mini`; you can enter another OpenRouter OpenAI model ID in Model.
+Existing OpenAI settings are migrated to OpenRouter with the old key cleared.
+The default model runs with reasoning disabled for translation. Saved GPT-3.5 OpenRouter settings upgrade automatically; custom model IDs are preserved.
+Azure settings remain supported. Switching providers clears the key.
+
+Integration follows the [OpenRouter quickstart](https://openrouter.ai/docs/quickstart).
 
 Step 2. Install dependencies
 ```bash
-npm install
+yarn install --frozen-lockfile
 ```
 
 
@@ -59,3 +71,12 @@ npm run server
 # vercel dev (this contains both frontend and backend)
 # localhost:3000
 ```
+
+## Validation
+
+```bash
+yarn test
+yarn build
+```
+
+Tests mock OpenRouter responses and do not make paid model calls.
